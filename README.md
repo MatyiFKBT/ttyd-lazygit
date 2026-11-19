@@ -23,7 +23,7 @@ Published images are available on GitHub Container Registry:
 docker pull ghcr.io/matyifkbt/ttyd-lazygit:latest
 ```
 
-Tags: `latest`, `X`, `X.Y`, `X.Y.Z` and `sha-<commit>`. Images are published only for releases created by the release workflow, so `latest` and the major tag always point to the newest release.
+Tags: `latest`, `X`, `X.Y` and `X.Y.Z`. Images are published only for releases created by the release workflow, so `latest` and the major tag always point to the newest release.
 
 To build locally instead:
 
