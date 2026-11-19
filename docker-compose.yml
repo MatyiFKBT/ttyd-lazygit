@@ -1,0 +1,9 @@
+services:
+  lazygit:
+    build: .
+    image: ttyd-lazygit:latest
+    ports:
+      - "7681:7681"
+    volumes:
+      - /path/to/your/repo:/repo
+    restart: unless-stopped
