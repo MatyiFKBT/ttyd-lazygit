@@ -1,5 +1,8 @@
 # ttyd-lazygit
 
+> [!WARNING]
+> Anyone who can reach the port can read and modify the mounted repository. Do not expose it without authentication.
+
 A small Docker image that serves [lazygit](https://github.com/jesseduffield/lazygit) in the browser through [ttyd](https://github.com/tsl0922/ttyd).
 
 The container mounts a git repository at `/repo` and runs `ttyd -W lazygit` in that directory. Authentication is not included, so put a reverse proxy with OAuth in front of it.
@@ -51,4 +54,3 @@ docker build -t ttyd-lazygit:latest .
 
 - Port `7681` is ttyd's default.
 - The image sets `safe.directory '*'` for git so that a mounted repository owned by another UID works.
-- Anyone who can reach the port can read and modify the mounted repository. Do not expose it without authentication.
