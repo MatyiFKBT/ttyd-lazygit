@@ -4,6 +4,29 @@ A small Docker image that serves [lazygit](https://github.com/jesseduffield/lazy
 
 The container mounts a git repository at `/repo` and runs `ttyd -W lazygit` in that directory. Authentication is not included; put a reverse proxy with OAuth in front of it.
 
+## docker-compose
+
+`docker-compose.yml`:
+
+```yaml
+services:
+  lazygit:
+    image: ghcr.io/matyifkbt/ttyd-lazygit:latest
+    ports:
+      - "7681:7681"
+    volumes:
+      - /path/to/your/repo:/repo
+    restart: unless-stopped
+```
+
+Start it with:
+
+```sh
+docker compose up -d
+```
+
+Replace `/path/to/your/repo` with the absolute path of the repository to expose. Only one repository is served per container; run several services with different mounts and ports to serve more than one.
+
 ## Pinned versions
 
 The base image and package versions are pinned directly in the `Dockerfile`:
@@ -42,29 +65,6 @@ docker run -d \
 ```
 
 Open `http://localhost:7681` in a browser.
-
-## docker-compose
-
-`docker-compose.yml`:
-
-```yaml
-services:
-  lazygit:
-    image: ghcr.io/matyifkbt/ttyd-lazygit:latest
-    ports:
-      - "7681:7681"
-    volumes:
-      - /path/to/your/repo:/repo
-    restart: unless-stopped
-```
-
-Start it with:
-
-```sh
-docker compose up -d
-```
-
-Replace `/path/to/your/repo` with the absolute path of the repository to expose. Only one repository is served per container; run several services with different mounts and ports to serve more than one.
 
 ## Notes
 
