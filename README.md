@@ -8,10 +8,10 @@ The container mounts a git repository at `/repo` and runs `ttyd -W lazygit` in t
 
 The base image and package versions are pinned directly in the `Dockerfile`:
 
-- `FROM alpine:3.21`
-- `ttyd=1.7.7-r0`, `lazygit=0.44.1-r5`, `git=2.47.3-r0`
+- `FROM alpine:3.24`
+- `ttyd=1.7.7-r0`, `lazygit=0.48.0-r14`, `git=2.54.1-r0`
 
-[Renovate](https://docs.renovatebot.com/) keeps these up to date. `renovate.json` points the apk datasource at the Alpine 3.21 `main` and `community` repositories, so Renovate proposes package bumps for the `apk add` pins.
+[Renovate](https://docs.renovatebot.com/) keeps these up to date. `renovate.json` points the apk datasource at the Alpine 3.24 `main` and `community` repositories, so Renovate proposes package bumps for the `apk add` pins.
 
 Alpine package revisions are removed from the repository once superseded. If a pin stops resolving, update it to the current revision (`apk search -v lazygit` inside an Alpine container shows what is available).
 
