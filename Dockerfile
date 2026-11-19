@@ -7,6 +7,8 @@ RUN apk add --no-cache \
     && git config --system --add safe.directory '*' \
     && mkdir /repo
 
+COPY lazygit/config.yml /root/.config/lazygit/config.yml
+
 WORKDIR /repo
 VOLUME ["/repo"]
 EXPOSE 7681

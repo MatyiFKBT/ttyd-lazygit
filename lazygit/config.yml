@@ -1,0 +1,8 @@
+git:
+  fetchAll: true
+
+gui:
+  showRandomTip: false
+  skipNoStagedFilesWarning: true
+
+disableStartupPopups: true
