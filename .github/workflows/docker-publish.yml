@@ -37,6 +37,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
             type=sha
 
       - uses: docker/build-push-action@v6
@@ -48,3 +49,19 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  move-major-tag:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Point vN tag at this release
+        run: |
+          MAJOR="${GITHUB_REF_NAME#v}"
+          MAJOR="${MAJOR%%.*}"
+          git tag -f "v${MAJOR}" "$GITHUB_SHA"
+          git push -f origin "refs/tags/v${MAJOR}"

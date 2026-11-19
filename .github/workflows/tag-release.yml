@@ -1,0 +1,63 @@
+name: tag-release
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: tag-release
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine next version
+        id: next
+        run: |
+          LAST=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n 1)
+          if [ -z "$LAST" ]; then
+            NEXT=v1.0.0
+          else
+            RANGE="$LAST..HEAD"
+            if [ -z "$(git rev-list "$RANGE")" ]; then
+              echo "No new commits since $LAST"
+              exit 0
+            fi
+            LOG=$(git log --no-merges --format='%s%n%b' "$RANGE")
+            IFS=. read -r MAJOR MINOR PATCH <<< "${LAST#v}"
+            if grep -Eq '^[a-z]+(\([^)]*\))?!:|^BREAKING CHANGE:' <<< "$LOG"; then
+              MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
+            elif grep -Eq '^feat(\([^)]*\))?:' <<< "$LOG"; then
+              MINOR=$((MINOR + 1)); PATCH=0
+            else
+              PATCH=$((PATCH + 1))
+            fi
+            NEXT="v${MAJOR}.${MINOR}.${PATCH}"
+          fi
+          echo "tag=$NEXT" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push tag
+        if: steps.next.outputs.tag != ''
+        env:
+          TAG: ${{ steps.next.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "$TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$TAG"
+
+      - name: Start image publish
+        if: steps.next.outputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.next.outputs.tag }}
+        run: gh workflow run docker-publish.yml --ref "$TAG"
